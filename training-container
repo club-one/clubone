@@ -1,0 +1,7 @@
+FROM mariadb
+
+COPY ./ddl.sql /docker-entrypoint-initdb.d/1.sql
+COPY ./dml.sql /docker-entrypoint-initdb.d/2.sql
+
+ENV MYSQL_DATABASE training
+
