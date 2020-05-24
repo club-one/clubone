@@ -12,6 +12,6 @@
         <groupId>org.clubone.events.service</groupId>
         <artifactId>parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-    </parent>ssss
+    </parent>
 
 </project>
