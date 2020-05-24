@@ -19,6 +19,7 @@
         <artifactId>parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+<<<<<<< HEAD
 
     <dependencies>
         <dependency>
@@ -33,5 +34,7 @@
 		<scope>provided</scope>
         </dependency>
     </dependencies>
+=======
+>>>>>>> 00a8e045fd56bd1e9b52cc08d813a978d94a0f5c
 
 </project>
