@@ -2,15 +2,11 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-
-@Data
-@Slf4j
 public class $table.name {
-
     #foreach( $field in $table.columns)
     private $field.javaType $field.name;
-    #end
 
+    public $field.javaType get$field.name() {return $field.name;} 
+    public void set$field.name($field.javaType $field.name) {this.$field.name = $field.name;}
+    #end
 }

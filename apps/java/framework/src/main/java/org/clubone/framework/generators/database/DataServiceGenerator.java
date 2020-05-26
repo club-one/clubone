@@ -15,7 +15,6 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.Locale;
 import javax.sql.*;
-import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -66,8 +65,11 @@ public class DataServiceGenerator {
     }
 
     public void compile(String className, String classContent) throws Exception {
+
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+
+        log.info("Compiling {}::>>{}", className, classContent);
 
         JavaFileObject file = new JavaSourceFromString(className, classContent);
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, Locale.getDefault(), Charset.defaultCharset());
@@ -76,38 +78,35 @@ public class DataServiceGenerator {
         CompilationTask task = compiler.getTask(new PrintWriter(System.err), fileManager, diagnostics, null, null, compilationUnits);
 
         boolean success = task.call();
-        for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
-            log.info("{}",diagnostic.getCode());
-            log.info("{}",diagnostic.getKind());
-            log.info("{}",diagnostic.getPosition());
-            log.info("{}",diagnostic.getStartPosition());
-            log.info("{}",diagnostic.getEndPosition());
-            log.info("{}",diagnostic.getSource());
-            log.info("{}",diagnostic.getMessage(null));
+        if (!success) {
+            diagnostics.getDiagnostics().forEach((diagnostic) -> {
+                log.warn("{}", diagnostic.getCode());
+                log.warn("{}", diagnostic.getKind());
+                log.warn("{}", diagnostic.getPosition());
+                log.warn("{}", diagnostic.getStartPosition());
+                log.warn("{}", diagnostic.getEndPosition());
+                log.warn("{}", diagnostic.getSource());
+                log.warn("{}", diagnostic.getMessage(Locale.getDefault()));
+            });
         }
-        log.info("{}","Success: " + success);
-        
-        if (success) {
-            
-            File compileDirectory = new File("./");
-            Arrays.asList(compileDirectory.list()).stream().forEach((x) -> log.info("{}","child file:"+x));
-            
-            ClassLoader classLoader = new URLClassLoader(new URL[]{compileDirectory.toURI().toURL()});
-            Class cls = classLoader.loadClass(className);
-            Object instance = cls.getConstructors()[0].newInstance();
-            log.info("{}",cls.getMethod("toString", new Class[]{}).invoke(instance));
-        }
+
+        File compileDirectory = new File("./");
+        URL[] urls = new URL[]{compileDirectory.toURI().toURL()};
+        ClassLoader classLoader = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
+        Class cls = classLoader.loadClass(className);
+        Object instance = cls.getConstructors()[0].newInstance();
+        log.info("{}", cls.getMethod("toString", new Class[]{}).invoke(instance));
     }
 
     public static void main(String[] args) throws Exception {
         String classContent
-                = " public class HelloWorld {"
-                + "  public static void main(String args[]) {"
-                + "    log.info(\"{}\",\"This is in another java file\");"
+                = "public class HelloDate {"
+                + " @Override public String toString(){"
+                + "    return new java.util.Date().toString();"
                 + "  }"
                 + "}";
 
-        new DataServiceGenerator().compile("HelloWorld", classContent);
+        new DataServiceGenerator().compile("HelloDate", classContent);
     }
 }
 
@@ -115,9 +114,8 @@ class JavaSourceFromString extends SimpleJavaFileObject {
 
     final String code;
 
-    JavaSourceFromString(String name, String code) {
+    public JavaSourceFromString(String name, String code) {
         super(URI.create("string:///" + name.replace('.', '/') + Kind.SOURCE.extension), Kind.SOURCE);
-        System.out.print(">>> "+URI.create("string:///" + name.replace('.', '/') + Kind.SOURCE.extension));
         this.code = code;
     }
 

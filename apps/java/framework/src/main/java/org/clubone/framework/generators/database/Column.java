@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 public class Column {
     
-    private String fieldName;
+    private String name;
     
     private Class javaType;
     
