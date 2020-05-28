@@ -47,22 +47,40 @@
                 <version>1.6.0</version>
                 <executions>
                     <execution>
+                        <id>start</id>
                         <goals>
                             <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-jar</argument>
+                                <argument>target/h2.jar</argument>
+                                <argument>-tcpPort</argument>
+                                <argument>9080</argument>
+                                <argument>-password</argument>
+                                <argument>somePassword</argument>
+                            </arguments>
+                            <async>true</async>
+                        </configuration>
+                    </execution>
+                
+                    <execution>
+                        <id>stop</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-jar</argument>
+                                <argument>target/h2.jar</argument>
+                                <argument>-tcpShutdown</argument>
+                                <argument>tcp://localhost:9080</argument>
+                            </arguments>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-jar</argument>
-                        <argument>${project.build.directory}/h2.jar</argument>
-                        <argument>-tcpPort</argument>
-                        <argument>9080</argument>
-                        <argument>-password</argument>
-                        <argument>somePassword</argument>
-                    </arguments>
-                </configuration>
             </plugin>
         </plugins>
     </build>
