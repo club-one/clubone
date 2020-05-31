@@ -65,7 +65,7 @@
                     </execution>
                 
                     <execution>
-                        <id>stop</id>
+                        <id>h2-stop</id>
                         <goals>
                             <goal>exec</goal>
                         </goals>
