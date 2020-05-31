@@ -36,7 +36,6 @@
                                     <destFileName>h2.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
-                            <!-- other configurations here -->
                         </configuration>
                     </execution>
                 </executions>
@@ -47,7 +46,7 @@
                 <version>1.6.0</version>
                 <executions>
                     <execution>
-                        <id>start</id>
+                        <id>h2-start</id>
                         <goals>
                             <goal>exec</goal>
                         </goals>
